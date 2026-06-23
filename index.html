@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>College Timetable</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>AI Timetable Generator</h2>
+
+<form method="POST">
+<div class="form-box">
+
+<input name="dept" placeholder="Department">
+<input name="year" placeholder="Year / Semester">
+
+<select name="slot">
+<option value="Slot 1">Slot 1</option>
+<option value="Slot 2">Slot 2</option>
+</select>
+
+<h3>Subjects</h3>
+
+<div id="subjects">
+<div class="row">
+<input name="name" placeholder="Subject Name">
+<input name="code" placeholder="Code">
+<input name="faculty" placeholder="Faculty">
+<input name="hours" placeholder="Hours">
+</div>
+</div>
+
+<button type="button" onclick="addRow()">+ Add</button>
+<button type="submit">Generate</button>
+
+</div>
+</form>
+
+{% if timetable %}
+
+<div class="sheet">
+
+<h3>{{dept}} - {{year}} ({{slot}})</h3>
+
+<table>
+<tr>
+<th>DAY / HOUR</th>
+{% for t in timings %}
+<th>{{t}}</th>
+{% endfor %}
+</tr>
+
+{% for day, entries in timetable.items() %}
+<tr>
+<td>{{day}}</td>
+
+{% for e in entries %}
+
+{% if e == "SKIP" %}
+<!-- skip -->
+
+{% elif e.type == "LAB" %}
+<td colspan="2" style="background: {{e.color}}">
+{{e.name}} (LAB)
+</td>
+
+{% elif e.type == "BREAK" %}
+<td class="break">BREAK</td>
+
+{% elif e.type == "LUNCH" %}
+<td class="lunch">LUNCH</td>
+
+{% elif e.type == "SUB" %}
+<td style="background: {{e.color}}">
+{{e.name}}
+</td>
+
+{% else %}
+<td></td>
+
+{% endif %}
+
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+<h3>Course Details</h3>
+
+<table>
+<tr>
+<th>Course Name</th>
+<th>Code</th>
+<th>Faculty</th>
+<th>Hours</th>
+</tr>
+
+{% for s in subjects %}
+<tr>
+<td>{{s.name}}</td>
+<td style="background: {{colors[s.name]}}">
+{{s.code}}
+</td>
+<td>{{s.faculty}}</td>
+<td>{{s.hours}}</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+{% endif %}
+
+<script>
+function addRow(){
+let div=document.createElement("div");
+div.className="row";
+div.innerHTML=`
+<input name="name" placeholder="Subject Name">
+<input name="code" placeholder="Code">
+<input name="faculty" placeholder="Faculty">
+<input name="hours" placeholder="Hours">`;
+document.getElementById("subjects").appendChild(div);
+}
+</script>
+
+</body>
+</html>
